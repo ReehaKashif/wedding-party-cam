@@ -1,0 +1,13 @@
+WEDDING PARTY CAM — AUTO CAMERA + PHOTO AND VIDEO
+
+1. In your GitHub Pages repository, replace the existing index.html with this one.
+2. Keep the Custom domain field empty in Settings > Pages.
+3. If you have NOT yet run video_setup.sql, paste it into Supabase SQL Editor and click Run.
+4. Open the GitHub Pages website directly in Safari on iPhone. Allow camera and microphone permissions when prompted.
+5. The camera should open automatically. If Safari requires interaction, a small Enable Camera button appears.
+6. Tap PHOTO or VIDEO to choose mode. In VIDEO, tap the shutter once to record and again to stop; clips are limited to 30 seconds and 20 MB.
+7. Open Gallery to view shared uploads.
+
+The Supabase URL and publishable key are included in index.html. Never add secret or service_role keys to public GitHub files.
+
+Free-tier storage and bandwidth are limited. Public anonymous uploads need rate limiting, moderation and abuse protection before wide public sharing.
