@@ -4,9 +4,12 @@
 *{box-sizing:border-box}html,body{margin:0;min-height:100%;background:#090909;color:#fff;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}button{font:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent}button:disabled{opacity:.5}#app{min-height:100dvh;display:flex;flex-direction:column;max-width:760px;margin:auto;background:#050505}.top{height:66px;padding:10px 18px;display:flex;align-items:center;justify-content:space-between;flex:none}.brand{font-family:Georgia,serif;font-size:15px;letter-spacing:.02em}.topActions{display:flex;align-items:center;gap:14px}.plain{background:transparent;border:0;color:#fff;font-size:23px;padding:8px}.pill{border:1px solid #ffffff40;background:#222b;border-radius:22px;color:#fff;padding:9px 13px;font-size:13px}.cameraWrap{position:relative;flex:1;min-height:270px;max-height:calc(100dvh - 265px);overflow:hidden;background:#191919}.cameraWrap video{height:100%;width:100%;position:absolute;inset:0;object-fit:cover}.cameraWrap.front video{transform:scaleX(-1)}.placeholder{position:absolute;inset:0;display:grid;place-items:center;background:#191919;color:#eee;text-align:center;padding:30px;z-index:1}.placeholder button{margin-top:18px;background:#fff;color:#111;border:0;border-radius:30px;padding:14px 24px;font-weight:700}.cameraWrap.ready .placeholder{display:none}.cameraOverlay{position:absolute;inset:0;pointer-events:none;box-shadow:inset 0 0 55px #0003}.flash{position:absolute;inset:0;background:white;opacity:0;pointer-events:none;z-index:5}.flash.on{animation:flash .24s ease-out}@keyframes flash{0%{opacity:.9}100%{opacity:0}}.toast{position:absolute;bottom:18px;left:50%;transform:translateX(-50%);background:#171717e8;border:1px solid #ffffff33;border-radius:24px;padding:9px 15px;font-size:13px;white-space:nowrap;max-width:94%;overflow:hidden;text-overflow:ellipsis;opacity:0;transition:opacity .2s;z-index:6}.toast.show{opacity:1}.controls{height:199px;flex:none;display:flex;flex-direction:column;align-items:center;justify-content:space-around;background:#050505;padding-bottom:max(8px,env(safe-area-inset-bottom))}.modes{display:flex;gap:35px;align-items:center;color:#aaa;font-size:13px;letter-spacing:1.1px}.modeSelected{color:#f7dc64;font-weight:700}.shutterRow{display:grid;grid-template-columns:1fr 1fr 1fr;align-items:center;width:100%;padding:0 28px}.thumb{width:53px;height:53px;border:2px solid #555;border-radius:50%;overflow:hidden;background:#242424;justify-self:start;padding:0;display:grid;place-items:center;color:white;font-size:24px}.thumb img{width:100%;height:100%;object-fit:cover}.shutter{width:78px;height:78px;border-radius:50%;border:4px solid #ddd;background:transparent;justify-self:center;padding:5px;display:grid;place-items:center}.shutter span{display:block;width:100%;height:100%;background:#fff;border-radius:50%}.shutter:active span{transform:scale(.88)}.shutter.recording{border-color:#ff4d4d}.shutter.recording span{background:#ff3b30;border-radius:12px;transform:scale(.58)}.modes button{border:0;background:none;color:#aaa;letter-spacing:1.1px;font-size:13px;padding:9px}.modes button.active{color:#f7dc64;font-weight:700}.recBadge{position:absolute;top:12px;left:50%;transform:translateX(-50%);background:#d51f24;color:white;border-radius:15px;padding:7px 14px;font-weight:700;z-index:3;display:none}.recBadge.on{display:block}.grid video{width:100%;aspect-ratio:1;object-fit:cover;background:#000}.viewer video{max-width:100%;max-height:85dvh}.flip{background:#292929;border:0;border-radius:50%;width:54px;height:54px;color:#fff;font-size:29px;justify-self:end}.status{height:19px;font-size:12px;color:#ccc;text-align:center;margin-top:-5px}.galleryView{display:none;position:fixed;inset:0;background:#faf8f3;color:#211c17;z-index:20;overflow:auto;padding:0 0 30px}.galleryView.open{display:block}.galleryHead{position:sticky;top:0;display:flex;align-items:center;justify-content:space-between;padding:18px 18px;background:#faf8f3ee;backdrop-filter:blur(12px);border-bottom:1px solid #dfd3be;z-index:1}.galleryHead h1{font-family:Georgia,serif;font-size:23px;margin:0}.back{border:0;background:#25211c;color:white;border-radius:24px;padding:10px 16px}.galleryInfo{text-align:center;font-size:13px;color:#6e6659;padding:13px}.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:3px}.grid img{width:100%;aspect-ratio:1;object-fit:cover;background:#e3dcd0}.empty{grid-column:1/-1;text-align:center;padding:50px 20px;color:#655e54}.galleryFoot{text-align:center;color:#8a8175;font-size:12px;padding:22px}.viewer{position:fixed;inset:0;background:#000e;display:none;z-index:30;align-items:center;justify-content:center}.viewer.open{display:flex}.viewer img{max-width:100%;max-height:88dvh;object-fit:contain}.viewer button{position:absolute;right:18px;top:22px;border:0;border-radius:30px;background:#333;color:white;padding:12px 17px}@media(min-width:760px){.cameraWrap{max-height:calc(100dvh - 265px)}.grid{grid-template-columns:repeat(4,minmax(0,1fr))}}@media(max-height:590px){.top{height:48px}.controls{height:155px}.cameraWrap{max-height:calc(100dvh - 203px)}.shutter{width:65px;height:65px}}
 .status{display:block!important;max-width:95%;height:auto;min-height:19px}.placeholder{background:#101010}.placeholder button{font-size:14px}.galleryTools{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;padding:14px}.downloadAll,.downloadOne{border:1px solid #c7b58f;background:#fff;color:#302518;border-radius:22px;padding:11px 17px;font-weight:650}.downloadAll:disabled{opacity:.5}.galleryTile{position:relative;min-width:0;aspect-ratio:1;background:#181818;overflow:hidden}.galleryTile img,.galleryTile video{width:100%;height:100%;object-fit:cover}.tileDownload{position:absolute;bottom:6px;right:6px;background:#111d;color:#fff;border:1px solid #fff7;border-radius:20px;padding:7px 10px;font-size:14px}.viewerTools{position:absolute;bottom:max(28px,env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);display:flex;gap:8px}.viewerTools button{position:static;background:#fff;color:#111;font-weight:650}.downloadProgress{font-size:13px;text-align:center;padding:4px 14px;color:#655e54;min-height:18px}</style></head>
 <body><div id="app"><header class="top"><div class="brand">✦ Wedding Party Cam</div><div class="topActions"><button class="pill" id="galleryTop">▦ Gallery</button></div></header><div id="cameraWrap" class="cameraWrap front"><video id="preview" autoplay muted playsinline></video><div class="placeholder" id="placeholder"><div><div id="cameraLoading" style="font-size:15px;color:#bdbdbd"></div><button id="start" style="display:none">Enable Camera</button></div></div><div class="cameraOverlay"></div><div class="recBadge" id="recBadge">● REC <span id="recTime">0:00</span></div><div class="flash" id="flash"></div><div class="toast" id="toast" role="status"></div></div><section class="controls"><div class="modes"><button id="photoMode" class="active">PHOTO</button><button id="videoMode">VIDEO</button></div><div class="shutterRow"><button class="thumb" id="galleryThumb" aria-label="Open live gallery">▦</button><button class="shutter" id="shutter" aria-label="Take and automatically share photo"><span></span></button><button class="flip" id="flip" aria-label="Switch front or rear camera">⟳</button></div><div class="status" id="status">PHOTO · Ready to capture</div></section></div>
-<section id="galleryView" class="galleryView" aria-label="Live wedding gallery"><div class="galleryHead"><button class="back" id="back">‹ Camera</button><h1>Live Gallery ✨</h1><span id="count">0 photos</span></div><div class="galleryInfo">Wedding guests can view and save shared memories</div><div class="galleryTools"><button class="downloadAll" id="downloadAll">↓ Download loaded memories (ZIP)</button></div><div class="downloadProgress" id="downloadProgress" role="status"></div><div class="grid" id="gallery"><div class="empty">Your wedding memories will appear here 📸</div></div><div class="galleryTools"><button class="downloadAll" id="loadMore" hidden>Load more memories</button><button class="downloadAll" id="refreshGallery">Refresh</button></div><div class="galleryFoot">Only take and share photos you are happy for all guests to see.</div></section><div class="viewer" id="viewer"><button id="closeViewer">✕ Close</button><img id="largePhoto" alt="Wedding photo"><video id="largeVideo" controls playsinline style="display:none"></video><div class="viewerTools"><button class="downloadOne" id="downloadCurrent">↓ Save photo / video</button></div></div>
+<section id="galleryView" class="galleryView" aria-label="Live wedding gallery"><div class="galleryHead"><button class="back" id="back">‹ Camera</button><h1>Live Gallery ✨</h1><span id="count">0 photos</span></div><div class="galleryInfo">Old memories from Supabase · New uploads to Drive</div><div id="sourceStatus" class="galleryInfo" role="status"></div><div class="galleryTools"><button class="downloadAll" id="downloadAll">↓ Download loaded memories (ZIP)</button></div><div class="downloadProgress" id="downloadProgress" role="status"></div><div class="grid" id="gallery"><div class="empty">Your wedding memories will appear here 📸</div></div><div class="galleryTools"><button class="downloadAll" id="loadMore" hidden>Load more memories</button><button class="downloadAll" id="refreshGallery">Refresh</button></div><div class="galleryFoot">Only take and share photos you are happy for all guests to see.</div></section><div class="viewer" id="viewer"><button id="closeViewer">✕ Close</button><img id="largePhoto" alt="Wedding photo"><video id="largeVideo" controls playsinline style="display:none"></video><div class="viewerTools"><button class="downloadOne" id="downloadCurrent">↓ Save photo / video</button></div></div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js" defer></script>
 <script type="module">
+const SUPABASE_URL='https://jwqtymufuwxneeudsacd.supabase.co';
+const SUPABASE_ANON_KEY='sb_publishable_6VQU4UPujIk4dDnz0FLGUw_hHzlvvJe';
+const EVENT_ID='our-wedding';
 const DRIVE_APP='https://script.google.com/macros/s/AKfycbwx6rQ2JwSgf15AOwzdmwbkAneHPxF5gK6Iyf1Ot4rkq2kSAHm1hVIP-SqrlS_8Hl2F7A/exec';
 const DRIVE_KEY='ILnpvqrm6Ab_S7544wOg0zN_sfwReaEgQnkUgJ2TGZ8';
 const $=s=>document.querySelector(s),video=$('#preview'),wrap=$('#cameraWrap'),status=$('#status');
@@ -84,22 +87,38 @@ async function driveRequest(action,payload={}){
 function blobBase64(blob){return new Promise((resolve,reject)=>{const r=new FileReader();r.onload=()=>resolve(r.result.split(',')[1]);r.onerror=()=>reject(Error('Could not read media.'));r.readAsDataURL(blob)})}
 function decodeBlob(data){const raw=atob(data.base64),bytes=new Uint8Array(raw.length);for(let i=0;i<raw.length;i++)bytes[i]=raw.charCodeAt(i);return new Blob([bytes],{type:data.mime})}
 const originalCache=new Map();
-async function originalBlob(item){if(originalCache.has(item.id))return originalCache.get(item.id);const blob=decodeBlob(await driveRequest('original',{id:item.id}));originalCache.set(item.id,blob);while(originalCache.size>2)originalCache.delete(originalCache.keys().next().value);return blob}
-function fileName(item){return item.name||('wedding_'+item.id+(item.type==='video'?'.mp4':'.jpg'))}
+function itemKey(item){return (item.source||'drive')+':'+item.type+':'+item.id}
+function supabaseMediaUrl(item){const bucket=item.type==='video'?'party-videos':'party-photos';return SUPABASE_URL+'/storage/v1/object/public/'+bucket+'/'+item.path.split('/').map(encodeURIComponent).join('/')}
+async function checkedFetch(url,options={}){const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),20000);try{const response=await fetch(url,{...options,signal:controller.signal});if(!response.ok){if(response.status===402)throw Error('Supabase is restricted (402). Old memories will load when access is restored. New Drive uploads still work.');throw Error('Supabase request failed ('+response.status+').')}return response}finally{clearTimeout(timer)}}
+async function originalBlob(item){
+ const key=itemKey(item);if(originalCache.has(key))return originalCache.get(key);
+ const blob=item.source==='supabase'?await (await checkedFetch(supabaseMediaUrl(item))).blob():decodeBlob(await driveRequest('original',{id:item.id}));
+ originalCache.set(key,blob);while(originalCache.size>2)originalCache.delete(originalCache.keys().next().value);return blob;
+}
+function fileName(item){if(item.name)return item.name;const ext=(item.path||'').split('.').pop()||(item.type==='video'?'mp4':'jpg');return 'supabase_'+item.type+'_'+item.id+'.'+ext}
 function saveBlob(blob,name){const u=URL.createObjectURL(blob),a=document.createElement('a');a.href=u;a.download=name;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),60000)}
 async function downloadItem(item){saveBlob(await originalBlob(item),fileName(item))}
 let viewerUrl=null;
 function closeViewer(){$('#viewer').classList.remove('open');$('#largeVideo').pause();$('#largeVideo').removeAttribute('src');$('#largeVideo').load();$('#largePhoto').removeAttribute('src');currentMedia=null;if(viewerUrl)URL.revokeObjectURL(viewerUrl);viewerUrl=null}
 async function openMedia(item){
   currentMedia=item;$('#downloadProgress').textContent='Loading original…';
-  try{const blob=await originalBlob(item);if(currentMedia?.id!==item.id)return;
+  try{const blob=await originalBlob(item);if(!currentMedia || itemKey(currentMedia)!==itemKey(item))return;
     if(viewerUrl)URL.revokeObjectURL(viewerUrl);viewerUrl=URL.createObjectURL(blob);
     $('#largePhoto').style.display=item.type==='photo'?'block':'none';$('#largeVideo').style.display=item.type==='video'?'block':'none';
     $('#largeVideo').pause();(item.type==='video'?$('#largeVideo'):$('#largePhoto')).src=viewerUrl;$('#viewer').classList.add('open');
   }catch(e){alert(e.message)}finally{$('#downloadProgress').textContent=''}
 }
 const thumbnailQueue=[];let thumbnailActive=0;
-function pumpThumbnails(){while(thumbnailActive<2 && thumbnailQueue.length){const task=thumbnailQueue.shift();thumbnailActive++;driveRequest('thumbnail',{id:task.item.id}).then(data=>{if(!data||!task.img.isConnected)return;task.img.src='data:'+data.mime+';base64,'+data.base64;task.img.style.display='block'}).catch(()=>{}).finally(()=>{thumbnailActive--;pumpThumbnails()})}}
+function pumpThumbnails(){while(thumbnailActive<2 && thumbnailQueue.length){
+ const task=thumbnailQueue.shift();if(!task.img.isConnected)continue;
+ if(task.item.source==='supabase'){
+  // Old storage has no separate thumbnails. Load photos only when near the viewport;
+  // never preload old video files to populate the grid.
+  if(task.item.type==='photo'){task.img.loading='lazy';task.img.onerror=()=>{task.img.style.display='none'};task.img.src=supabaseMediaUrl(task.item);task.img.style.display='block'}
+  continue;
+ }
+ thumbnailActive++;driveRequest('thumbnail',{id:task.item.id}).then(data=>{if(!data||!task.img.isConnected)return;task.img.src='data:'+data.mime+';base64,'+data.base64;task.img.style.display='block'}).catch(()=>{}).finally(()=>{thumbnailActive--;pumpThumbnails()})
+}}
 const thumbObserver=new IntersectionObserver(entries=>{for(const e of entries)if(e.isIntersecting){thumbObserver.unobserve(e.target);thumbnailQueue.push(e.target._thumbTask);pumpThumbnails()}},{root:$('#galleryView'),rootMargin:'150px'});
 function renderGallery(){
   const gallery=$('#gallery');thumbObserver.disconnect();thumbnailQueue.length=0;gallery.replaceChildren();
@@ -108,17 +127,47 @@ function renderGallery(){
   for(const item of allLoadedItems){const tile=document.createElement('div');tile.className='galleryTile';
     const open=document.createElement('button');open.style.cssText='width:100%;height:100%;border:0;background:#222;color:white;font-size:28px;padding:0;position:relative';open.textContent=item.type==='video'?'▶':'📷';open.ariaLabel='Open '+item.type;open.onclick=()=>openMedia(item);
     const img=document.createElement('img');img.alt=item.type==='video'?'Video thumbnail':'Photo thumbnail';img.style.cssText='position:absolute;inset:0;display:none';open.append(img);tile.append(open);
-    const dl=document.createElement('button');dl.className='tileDownload';dl.textContent='↓ Save';dl.onclick=async()=>{dl.disabled=true;try{await downloadItem(item)}catch(e){alert(e.message)}finally{dl.disabled=false}};tile.append(dl);gallery.append(tile);
+    const dl=document.createElement('button');dl.className='tileDownload';dl.textContent='↓ Save';dl.title=item.source==='supabase'?'Old memory · Supabase':'New memory · Google Drive';dl.onclick=async()=>{dl.disabled=true;try{await downloadItem(item)}catch(e){alert(e.message)}finally{dl.disabled=false}};tile.append(dl);gallery.append(tile);
     img._thumbTask={img,item};thumbObserver.observe(img);
   }
-  $('#loadMore').hidden=!galleryCursor;
+  $('#loadMore').hidden=!(galleryCursor||supabaseMore.photos||supabaseMore.videos);
+}
+let supabaseOffsets={photos:0,videos:0},supabaseMore={photos:true,videos:true};
+let sourceErrors={drive:'',photos:'',videos:''};
+function mergeSourceItems(source,items,reset,type){
+ let retained=allLoadedItems;
+ if(reset)retained=retained.filter(x=>(x.source||'drive')!==source||(type&&x.type!==type));
+ const map=new Map(retained.map(x=>[itemKey(x),x]));
+ for(const item of items)map.set(itemKey(item),item);
+ allLoadedItems=[...map.values()].sort((a,b)=>b.created_at.localeCompare(a.created_at));
+}
+function sourceNotice(){
+ const errors=[...new Set(Object.values(sourceErrors).filter(Boolean))];
+ $('#sourceStatus').textContent=errors.join(' ');
+}
+async function loadSupabasePage(kind,reset){
+ if(!reset&&!supabaseMore[kind])return;
+ const offset=reset?0:supabaseOffsets[kind],type=kind==='videos'?'video':'photo',table=kind==='videos'?'party_videos':'party_photos';
+ try{
+  const response=await checkedFetch(SUPABASE_URL+'/rest/v1/'+table+'?event_id=eq.'+encodeURIComponent(EVENT_ID)+'&select=id,path,created_at&order=created_at.desc,id.desc&limit=40&offset='+offset,{headers:{apikey:SUPABASE_ANON_KEY}});
+  const rows=await response.json();if(!Array.isArray(rows))throw Error('Unexpected old-gallery response.');
+  mergeSourceItems('supabase',rows.map(x=>({...x,source:'supabase',type})),reset,type);
+  supabaseOffsets[kind]=offset+rows.length;supabaseMore[kind]=rows.length===40;sourceErrors[kind]='';
+ }catch(e){sourceErrors[kind]=e.name==='AbortError'?'Supabase took too long. Drive remains available.':e.message}
+ sourceNotice();renderGallery();
+}
+async function loadDrivePage(reset){
+ if(!reset&&!galleryCursor)return;
+ try{const data=await driveRequest('list',{cursor:reset?null:galleryCursor});
+  mergeSourceItems('drive',data.items.map(x=>({...x,source:'drive'})),reset);
+  galleryCursor=data.cursor;sourceErrors.drive='';
+ }catch(e){sourceErrors.drive='Drive: '+e.message}
+ sourceNotice();renderGallery();
 }
 async function loadGallery(reset=false){
-  if(galleryLoading)return;galleryLoading=true;$('#loadMore').disabled=true;
-  try{const data=await driveRequest('list',{cursor:reset?null:galleryCursor});
-    const merged=reset?[]:allLoadedItems;const map=new Map(merged.map(x=>[x.id,x]));for(const item of data.items)map.set(item.id,item);
-    allLoadedItems=[...map.values()].sort((a,b)=>b.created_at.localeCompare(a.created_at));galleryCursor=data.cursor;galleryInitialized=true;renderGallery();$('#downloadProgress').textContent='';
-  }catch(e){$('#downloadProgress').textContent=e.message}finally{galleryLoading=false;$('#loadMore').disabled=false}
+ if(galleryLoading)return;galleryLoading=true;$('#loadMore').disabled=true;$('#refreshGallery').disabled=true;$('#downloadProgress').textContent='Loading memories…';
+ try{await Promise.allSettled([loadDrivePage(reset),loadSupabasePage('photos',reset),loadSupabasePage('videos',reset)]);galleryInitialized=true;}
+ finally{galleryLoading=false;$('#loadMore').disabled=false;$('#refreshGallery').disabled=false;$('#downloadProgress').textContent='';sourceNotice();renderGallery()}
 }
 $('#loadMore').onclick=()=>loadGallery();$('#refreshGallery').onclick=()=>loadGallery(true);
 let pendingCapture=null;
@@ -131,7 +180,7 @@ async function uploadCapture(blob,type){
   if(!pendingCapture)pendingCapture={blob,type,id:crypto.randomUUID()};
   const pending=pendingCapture;recovery.hidden=true;
   try{const item=await driveRequest('upload',{id:pending.id,mime:blob.type,base64:await blobBase64(blob)});
-    pendingCapture=null;recovery.hidden=true;allLoadedItems=[item,...allLoadedItems.filter(x=>x.id!==item.id)];galleryInitialized=false;
+    pendingCapture=null;recovery.hidden=true;item.source='drive';mergeSourceItems('drive',[item],false);galleryInitialized=false;
     $('#galleryThumb').textContent=type==='video'?'▶':'📷';notify('✓ Saved to wedding Drive');return item;
   }catch(e){recovery.hidden=false;throw e}
 }
