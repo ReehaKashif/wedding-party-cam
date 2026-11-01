@@ -9,18 +9,50 @@
 <script type="module">
 const SUPABASE_URL='https://jwqtymufuwxneeudsacd.supabase.co';
 const SUPABASE_ANON_KEY='sb_publishable_6VQU4UPujIk4dDnz0FLGUw_hHzlvvJe';
-// High-quality capture: full-resolution stills, native-photo capture where available.
-const PHOTO_JPEG_QUALITY=0.95, VIDEO_BITRATE=4800000;
+// Direct camera version 3: no welcome screen.
 const EVENT_ID='our-wedding', BUCKET='party-photos', VIDEO_BUCKET='party-videos';
 const $=s=>document.querySelector(s),video=$('#preview'),wrap=$('#cameraWrap'),status=$('#status');
 let currentMedia=null,allLoadedItems=[];
 let stream=null,facing='user',busy=false,lastKey='',lastImage='',toastTimer,mode='photo',recorder=null,recordChunks=[],recordStarted=0,recordTimer=null;
 function notify(message){if(message.startsWith('✓'))return;clearTimeout(toastTimer);$('#toast').textContent=message;$('#toast').classList.add('show');toastTimer=setTimeout(()=>$('#toast').classList.remove('show'),3800)}
 function setStatus(s){status.textContent=s}
-async function startCamera(){try{if(recorder&&recorder.state==='recording'){notify('Stop recording before switching cameras.');return;} stream?.getTracks().forEach(t=>t.stop());stream=null;const s=await navigator.mediaDevices.getUserMedia({audio:mode==='video',video:{facingMode:{ideal:facing},width:{ideal:mode==='photo'?3840:1920},height:{ideal:mode==='photo'?2160:1080},frameRate:{ideal:30,max:30}}});stream=s;video.srcObject=s;await video.play();wrap.classList.add('ready');wrap.classList.toggle('front',facing==='user');setStatus(mode==='video'?'Tap shutter to record video':'Tap shutter to capture & share');}catch(e){setStatus('Camera permission needed');$('#cameraLoading').textContent='Camera permission is required. Tap Enable Camera below if the browser blocked the request.';$('#start').style.display='inline-block';notify('Tap Enable Camera and allow camera access.');}}
-$('#start').onclick=startCamera;
-async function switchMode(next){if(busy||recorder?.state==='recording')return;mode=next;$('#photoMode').classList.toggle('active',mode==='photo');$('#videoMode').classList.toggle('active',mode==='video');setStatus(mode==='video'?'Tap shutter to record (max 30 seconds)':'Tap shutter to capture & share');if(stream)await startCamera()}
-$('#photoMode').onclick=()=>switchMode('photo');$('#videoMode').onclick=()=>switchMode('video');$('#flip').onclick=async()=>{facing=facing==='user'?'environment':'user';await startCamera()};
+let cameraStarting=false;
+function qualityStatus(){const t=stream?.getVideoTracks()[0],s=t?.getSettings()||{};const w=s.width||video.videoWidth,h=s.height||video.videoHeight;return w&&h?`${w} × ${h}${Math.min(w,h)>=720?' HD':''}`:'Camera ready'}
+async function startCamera(requested=facing){
+  if(cameraStarting||busy||recorder?.state==='recording')return false;
+  cameraStarting=true;$('#flip').disabled=true;$('#shutter').disabled=true;
+  const previous=facing;let candidate=null;
+  try{
+    if(!navigator.mediaDevices?.getUserMedia)throw Error('Camera requires HTTPS and Safari or Chrome.');
+    stream?.getTracks().forEach(t=>t.stop());stream=null;wrap.classList.remove('ready');
+    const cameras=await navigator.mediaDevices.enumerateDevices().catch(()=>[]);
+    const devices=cameras.filter(d=>d.kind==='videoinput');
+    const named=devices.find(d=>requested==='environment'?/back|rear|environment/i.test(d.label):/front|user|facetime/i.test(d.label));
+    async function open(which,strict=true){
+      const videoConstraints={width:{ideal:mode==='photo'?3840:1920},height:{ideal:mode==='photo'?2160:1080},frameRate:{ideal:30,max:30}};
+      if(named&&which===requested)videoConstraints.deviceId={exact:named.deviceId};
+      else videoConstraints.facingMode=strict?{exact:which}:{ideal:which};
+      try{return await navigator.mediaDevices.getUserMedia({audio:mode==='video',video:videoConstraints})}
+      catch(e){if(mode==='video'&&e.name==='NotAllowedError'){const result=await navigator.mediaDevices.getUserMedia({audio:false,video:videoConstraints});notify('Microphone unavailable — recording without sound.');return result}throw e}
+    }
+    try{candidate=await open(requested)}catch(e){
+      if(!['OverconstrainedError','NotFoundError'].includes(e.name))throw e;
+      candidate=await open(previous,false);notify('Requested camera unavailable; using the available camera.');
+    }
+    stream=candidate;const settings=stream.getVideoTracks()[0].getSettings();
+    facing=settings.facingMode||(named&&settings.deviceId===named.deviceId?requested:previous);
+    video.srcObject=stream;await video.play();
+    wrap.classList.add('ready');wrap.classList.toggle('front',facing==='user');
+    setStatus(`${qualityStatus()} · ${mode==='video'?'Tap shutter to record':'Tap shutter to capture & share'}`);
+    return true;
+  }catch(e){candidate?.getTracks().forEach(t=>t.stop());stream=null;video.srcObject=null;
+    setStatus('Camera unavailable');$('#cameraLoading').textContent=e.name==='NotAllowedError'?'Allow camera access in your browser, then tap Enable Camera.':e.message;
+    $('#start').style.display='inline-block';notify(e.message);return false;
+  }finally{cameraStarting=false;$('#flip').disabled=false;$('#shutter').disabled=false;}
+}
+$('#start').onclick=()=>startCamera();
+async function switchMode(next){if(busy||cameraStarting||recorder?.state==='recording')return;mode=next;$('#photoMode').classList.toggle('active',mode==='photo');$('#videoMode').classList.toggle('active',mode==='video');setStatus(mode==='video'?'Tap shutter to record (max 30 seconds)':'Tap shutter to capture & share');if(stream)await startCamera()}
+$('#photoMode').onclick=()=>switchMode('photo');$('#videoMode').onclick=()=>switchMode('video');$('#flip').onclick=()=>startCamera(facing==='user'?'environment':'user');
 function api(path,opts={}){return fetch(`${SUPABASE_URL}/rest/v1/${path}`,{...opts,headers:{apikey:SUPABASE_ANON_KEY,...opts.headers}})}
 function mediaUrl(bucket,path){return `${SUPABASE_URL}/storage/v1/object/public/${bucket}/${path.split('/').map(encodeURIComponent).join('/')}`}
 function photoUrl(path){return mediaUrl(BUCKET,path)}
@@ -104,41 +136,11 @@ $('#downloadAll').onclick=async()=>{
   }catch(e){progress.textContent=`Download error: ${e.message}`}
   finally{btn.disabled=false}
 };
-// Prefer a native still photograph on rear cameras; fall back to a full-size video frame.
-// Front-camera frames retain the mirrored appearance of the preview.
-async function captureHighQualityPhoto(){
-  const track=stream?.getVideoTracks()[0];
-  if(facing==='environment' && track && typeof window.ImageCapture==='function'){
-    try{
-      const camera=new ImageCapture(track);
-      const nativeBlob=await camera.takePhoto();
-      // Uploads use .jpg: normalize the native image to JPEG rather than assume its format.
-      if(nativeBlob.type==='image/jpeg' && nativeBlob.size)return nativeBlob;
-      if(typeof createImageBitmap==='function'){
-        const bitmap=await createImageBitmap(nativeBlob);
-        try{
-          const canvas=document.createElement('canvas');canvas.width=bitmap.width;canvas.height=bitmap.height;
-          canvas.getContext('2d').drawImage(bitmap,0,0);
-          const jpeg=await new Promise(resolve=>canvas.toBlob(resolve,'image/jpeg',PHOTO_JPEG_QUALITY));
-          if(jpeg)return jpeg;
-        }finally{bitmap.close()}
-      }
-    }catch(error){console.info('Native still unavailable; using full-resolution camera frame.',error.name)}
-  }
-  const canvas=document.createElement('canvas');
-  canvas.width=video.videoWidth;canvas.height=video.videoHeight;
-  const ctx=canvas.getContext('2d');
-  if(!ctx)throw Error('Could not prepare the photo. Please try again.');
-  if(facing==='user'){ctx.translate(canvas.width,0);ctx.scale(-1,1)}
-  ctx.drawImage(video,0,0,canvas.width,canvas.height);
-  return new Promise(resolve=>canvas.toBlob(resolve,'image/jpeg',PHOTO_JPEG_QUALITY));
-}
-
-async function capture(){if(mode==='video'){await toggleRecord();return;}if(busy)return;if(!stream){await startCamera();if(!stream)return;notify('Camera ready — tap the shutter again.');return}if(!video.videoWidth){notify('Camera is starting. Try again.');return}busy=true;$('#shutter').disabled=true;$('#flash').classList.remove('on');void $('#flash').offsetWidth;$('#flash').classList.add('on');setStatus('Uploading your photo…');try{const blob=await captureHighQualityPhoto();if(!blob)throw Error('Could not capture photo');const uuid=crypto.randomUUID(),path=`${EVENT_ID}/${uuid}.jpg`;const upload=await fetch(`${SUPABASE_URL}/storage/v1/object/${BUCKET}/${path}`,{method:'POST',headers:{apikey:SUPABASE_ANON_KEY,'Content-Type':'image/jpeg','x-upsert':'false'},body:blob});if(!upload.ok)throw Error(`Upload failed (${upload.status}): ${(await upload.text()).slice(0,120)}`);const insert=await api('party_photos',{method:'POST',headers:{'Content-Type':'application/json',Prefer:'return=minimal'},body:JSON.stringify({id:uuid,event_id:EVENT_ID,path})});if(!insert.ok)throw Error(`Gallery update failed (${insert.status}): ${(await insert.text()).slice(0,120)}`);notify('✓ Photo shared with everyone!');setStatus('Photo shared! Take another 📸');await loadGallery()}catch(e){setStatus('Photo not shared');notify(e.message)}finally{busy=false;$('#shutter').disabled=false}}
+async function capture(){if(mode==='video'){await toggleRecord();return;}if(busy||cameraStarting)return;if(!stream){await startCamera();if(!stream)return;notify('Camera ready — tap the shutter again.');return}if(!video.videoWidth){notify('Camera is starting. Try again.');return}busy=true;$('#shutter').disabled=true;$('#flash').classList.remove('on');void $('#flash').offsetWidth;$('#flash').classList.add('on');setStatus('Uploading your photo…');try{const c=document.createElement('canvas');c.width=video.videoWidth;c.height=video.videoHeight;const ctx=c.getContext('2d');if(facing==='user'){ctx.translate(c.width,0);ctx.scale(-1,1)}ctx.drawImage(video,0,0,c.width,c.height);const blob=await new Promise(resolve=>c.toBlob(resolve,'image/jpeg',.98));if(!blob)throw Error('Could not capture photo');const uuid=crypto.randomUUID(),path=`${EVENT_ID}/${uuid}.jpg`;const upload=await fetch(`${SUPABASE_URL}/storage/v1/object/${BUCKET}/${path}`,{method:'POST',headers:{apikey:SUPABASE_ANON_KEY,'Content-Type':'image/jpeg','x-upsert':'false'},body:blob});if(!upload.ok)throw Error(`Upload failed (${upload.status}): ${(await upload.text()).slice(0,120)}`);const insert=await api('party_photos',{method:'POST',headers:{'Content-Type':'application/json',Prefer:'return=minimal'},body:JSON.stringify({id:uuid,event_id:EVENT_ID,path})});if(!insert.ok)throw Error(`Gallery update failed (${insert.status}): ${(await insert.text()).slice(0,120)}`);notify('✓ Photo shared with everyone!');setStatus('Photo shared! Take another 📸');await loadGallery()}catch(e){setStatus('Photo not shared');notify(e.message)}finally{busy=false;$('#shutter').disabled=false}}
 function recordingMime(){const candidates=['video/mp4','video/webm;codecs=vp8,opus','video/webm'];return candidates.find(x=>MediaRecorder.isTypeSupported(x))||''}
 function recordingClock(){const sec=Math.floor((Date.now()-recordStarted)/1000);$('#recTime').textContent=`${Math.floor(sec/60)}:${String(sec%60).padStart(2,'0')}`;if(sec>=30&&recorder?.state==='recording')recorder.stop()}
-async function toggleRecord(){if(recorder?.state==='recording'){recorder.stop();return}if(busy)return;if(!window.MediaRecorder){notify('Video recording is not supported in this browser. Try Safari.');return}if(!stream){await startCamera();if(!stream)return}const mime=recordingMime();if(!mime){notify('This browser does not support video recording.');return}try{recordChunks=[];recorder=new MediaRecorder(stream,{mimeType:mime,videoBitsPerSecond:VIDEO_BITRATE,audioBitsPerSecond:128000});recorder.ondataavailable=e=>{if(e.data.size)recordChunks.push(e.data)};recorder.onerror=()=>notify('Recording error. Please try again.');recorder.onstop=saveVideo;recordStarted=Date.now();recorder.start(1000);$('#shutter').classList.add('recording');$('#recBadge').classList.add('on');recordingClock();recordTimer=setInterval(recordingClock,250);setStatus('Recording… tap shutter to stop');}catch(e){notify(`Cannot start recording: ${e.message}`)}}
-async function saveVideo(){clearInterval(recordTimer);$('#recBadge').classList.remove('on');$('#shutter').classList.remove('recording');busy=true;$('#shutter').disabled=true;setStatus('Uploading video…');try{const mime=recorder.mimeType;const blob=new Blob(recordChunks,{type:mime});if(blob.size<1000)throw Error('Video is empty. Please try again.');if(blob.size>20*1024*1024)throw Error('Video exceeds 20 MB. Please record a shorter clip.');const ext=mime.includes('mp4')?'mp4':'webm';const uuid=crypto.randomUUID(),path=`${EVENT_ID}/${uuid}.${ext}`;const up=await fetch(`${SUPABASE_URL}/storage/v1/object/${VIDEO_BUCKET}/${path}`,{method:'POST',headers:{apikey:SUPABASE_ANON_KEY,'Content-Type':mime.split(';')[0],'x-upsert':'false'},body:blob});if(!up.ok)throw Error(`Video upload failed (${up.status}): ${(await up.text()).slice(0,120)}`);const insert=await api('party_videos',{method:'POST',headers:{'Content-Type':'application/json',Prefer:'return=minimal'},body:JSON.stringify({id:uuid,event_id:EVENT_ID,path})});if(!insert.ok)throw Error(`Gallery update failed (${insert.status}): ${(await insert.text()).slice(0,120)}`);notify('✓ Video shared with everyone!');setStatus('Video shared! Record another 🎥');await loadGallery()}catch(e){setStatus('Video not shared');notify(e.message)}finally{busy=false;$('#shutter').disabled=false}}
+async function toggleRecord(){if(recorder?.state==='recording'){recorder.stop();return}if(busy||cameraStarting)return;if(!window.MediaRecorder){notify('Video recording is not supported in this browser. Try Safari.');return}if(!stream){await startCamera();if(!stream)return}const mime=recordingMime();if(!mime){notify('This browser does not support video recording.');return}try{recordChunks=[];recorder=new MediaRecorder(stream,{mimeType:mime,videoBitsPerSecond:8000000,audioBitsPerSecond:128000});recorder.ondataavailable=e=>{if(e.data.size)recordChunks.push(e.data)};recorder.onerror=()=>notify('Recording error. Please try again.');recorder.onstop=saveVideo;recordStarted=Date.now();recorder.start(1000);$('#shutter').classList.add('recording');$('#recBadge').classList.add('on');recordingClock();recordTimer=setInterval(recordingClock,250);setStatus('Recording… tap shutter to stop');}catch(e){notify(`Cannot start recording: ${e.message}`)}}
+async function saveVideo(){clearInterval(recordTimer);$('#recBadge').classList.remove('on');$('#shutter').classList.remove('recording');busy=true;$('#shutter').disabled=true;setStatus('Uploading video…');try{const mime=recorder.mimeType;const blob=new Blob(recordChunks,{type:mime});if(blob.size<1000)throw Error('Video is empty. Please try again.');if(blob.size>50*1024*1024)throw Error('Video exceeds 50 MB. Please record a shorter clip.');const ext=mime.includes('mp4')?'mp4':'webm';const uuid=crypto.randomUUID(),path=`${EVENT_ID}/${uuid}.${ext}`;const up=await fetch(`${SUPABASE_URL}/storage/v1/object/${VIDEO_BUCKET}/${path}`,{method:'POST',headers:{apikey:SUPABASE_ANON_KEY,'Content-Type':mime.split(';')[0],'x-upsert':'false'},body:blob});if(!up.ok)throw Error(`Video upload failed (${up.status}): ${(await up.text()).slice(0,120)}`);const insert=await api('party_videos',{method:'POST',headers:{'Content-Type':'application/json',Prefer:'return=minimal'},body:JSON.stringify({id:uuid,event_id:EVENT_ID,path})});if(!insert.ok)throw Error(`Gallery update failed (${insert.status}): ${(await insert.text()).slice(0,120)}`);notify('✓ Video shared with everyone!');setStatus('Video shared! Record another 🎥');await loadGallery()}catch(e){setStatus('Video not shared');notify(e.message)}finally{busy=false;$('#shutter').disabled=false}}
 $('#shutter').onclick=capture;
 function showGallery(){loadGallery();$('#galleryView').classList.add('open')}
 $('#galleryTop').onclick=showGallery;$('#galleryThumb').onclick=showGallery;$('#back').onclick=()=>$('#galleryView').classList.remove('open');$('#closeViewer').onclick=()=>{$('#viewer').classList.remove('open');$('#largeVideo').pause()};$('#viewer').onclick=e=>{if(e.target===$('#viewer'))$('#viewer').classList.remove('open')};
